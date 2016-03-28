@@ -104,7 +104,7 @@ if [ -f $CACHE_DIR/depends_done ]; then
 1d71863a481e3b55cf33caf08227d78e  $CACHE_DIR/cedar14-clang.tar.gz
 d50c65959548987594528e2704d67588  $CACHE_DIR/cedar14-libicu-dev.tar.gz
 1a5e9d15b8aeac4079adac56e938b4ac  $CACHE_DIR/cedar14-libsqlite3-dev.tar.gz
-62a7e145acdb9c6a850b8e76367259f6  $CACHE_DIR/cedar14-perfect.tar.gz
+6007d46584b8fe73723f3ff34ff27615  $CACHE_DIR/cedar14-perfect.tar.gz
 24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
 58c5c574183bccd9945675768f2adba5  $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04.tar.gz
 EOF
