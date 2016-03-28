@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -f $1/src/Package.perfect -a -f $1/src/makefile ]; then
+    echo "Perfect"
+    exit 0
+  else
+    echo "Imperfect"
+    exit 1
+  fi

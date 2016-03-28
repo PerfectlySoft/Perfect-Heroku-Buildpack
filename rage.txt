@@ -1,0 +1,44 @@
+A Heroku Buildpack for Swift + Perfect
+Packaged by Shao Miller <swiftcode@synthetel.com>
+2016-03-22 13:25:42 UTC
+
+Heroku is really, really annoying.  It'd be great if all the concerns below
+were addressed by easily-accessible documentation.  If it exists, I couldn't
+find it.
+
+1. In the usual Buildpack-based process, you don't have super-user powers and
+cannot install packages which would otherwise be natively available.  This is
+because the stack is locked-down.
+
+2. On the one hand, you can derive your own "stacks" from theirs with your own
+stuff integrated, then deploy your stacks, but they do not work with the usual
+Buildpack-based process:
+
+  https://devcenter.heroku.com/articles/docker
+
+Why don't they?  Why the double-standard of locked-down for #1 and open for #2?
+
+3. The build-path is different than the deploy-path.  The former is a randomly-
+generated path and the latter is /app/.  If you rely on a piece of software
+that's inflexible in its expectation of paths, this fact really hurts.
+
+As a small example, suppose you wanted to install uuid-dev.  You can't do that
+with 'apt-get', so perhaps you take the Heroku cedar-14 stack, deploy it in
+your own environment without it being locked-down, install uuid-dev, then take
+a "delta" that you might expect to have a low difficulty of migrating to
+Heroku.  One of the pieces to adjust is the pkg-config .pc file for uuid-dev.
+It contains a 'prefix' variable.  Well this 'prefix' is going to need to be
+different in the build environment than in the deployed environment!
+
+Fortunately, the /app/ path is _also_ used in the build environment, so some
+kludgery can cause the build environment to more closely resemble the deployed
+environment.
+
+Hopefully one of the following occurs:
+
+1. Somebody smarter makes a smarter package
+2. This package gets smarter
+3. Heroku gets smarter
+4. Swift and Perfect get smarter:
+   a. Swift ought to inspect environment-variables for -I-like directives
+   b. Perfect makefiles and build-processes get less hard-coded about paths

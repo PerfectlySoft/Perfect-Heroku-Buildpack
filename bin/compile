@@ -1,0 +1,152 @@
+#!/bin/bash
+# Copyright (C) 2016 Synthetel Corporation
+# Author: Shao Miller <swiftcode@synthetel.com>
+
+function decomp() {
+    gunzip -f $CACHE_DIR/$1 || fail Decompressing $1
+  }
+
+function fail() {
+    say Build failure: $*
+    step Log
+    popd
+    cat $BUILD_DIR/build.log
+    exit 1
+  }
+
+function fetch() {
+    wget -P $CACHE_DIR $URL/$1 2> /dev/null || fail Fetching $1
+  }
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+function paths() {
+    cat << EOF
+#!/bin/bash
+export INCLUDE_PATH=$1/usr/local/include:$1/usr/local/include/x86_64-linux-gnu:$1/usr/include:$1/usr/include/x86_64-linux-gnu:\$INCLUDE_PATH
+export LD_LIBRARY_PATH=$1/usr/local/lib:$1/usr/local/lib/x86_64-linux-gnu:$1/usr/lib:$1/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH
+export LIBRARY_PATH=$1/usr/local/lib:$1/usr/local/lib/x86_64-linux-gnu:$1/usr/lib:$1/usr/lib/x86_64-linux-gnu:\$LIBRARY_PATH
+export PATH=$1/usr/local/bin:$1/usr/local/sbin:$1/usr/bin:$1/usr/sbin:\$PATH
+export PKG_CONFIG_PATH=$1/usr/lib/x86_64-linux-gnu/pkgconfig:\$PKG_CONFIG_PATH
+EOF
+  }
+
+function say() {
+    echo $* | sed -u 's/^/       /'
+  }
+
+function step() {
+    echo -----\> $*
+  }
+
+function untar() {
+    tar -C $CACHE_DIR -xf $CACHE_DIR/$1 || fail Extracting $1
+    rm -f $CACHE_DIR/$1
+  }
+
+step Checking stack
+if [ "$STACK" == "cedar-14" ]; then
+    true
+  else
+    fail Sorry, only Heroku cedar-14 stack is currently supported
+  fi
+say Ok
+
+step Setting environment
+BUILD_DIR=$1
+CACHE_DIR=$2
+pushd .
+say Ok
+
+step Ensuring cache directory
+mkdir $CACHE_DIR 2> $BUILD_DIR/build.log
+if [ -d $CACHE_DIR ]; then
+    true
+  else
+    fail Creating cache dir
+  fi
+say Ok
+
+step Generating profile script
+mkdir $BUILD_DIR/.profile.d 2> $BUILD_DIR/build.log
+if [ -d $BUILD_DIR/.profile.d ]; then
+    true
+  else
+    fail Creating .profile.d dir
+  fi
+paths /app/.delta > $BUILD_DIR/.profile.d/perfect.sh || fail Saving perfect.sh
+chmod a+x $BUILD_DIR/.profile.d/perfect.sh || fail chmod perfect.sh
+say Ok
+
+step Setting paths
+. $BUILD_DIR/.profile.d/perfect.sh || fail Executing perfect.sh
+say Ok
+
+step Checking dependencies
+if [ -f $CACHE_DIR/depends_done ]; then
+    say Dependencies cached
+  else
+    say Ok
+    step Fetching dependencies
+    URL=http://www.perfect.org/_buildpack
+    fetch cedar14-clang.tar.gz
+    fetch cedar14-libicu-dev.tar.gz
+    fetch cedar14-libsqlite3-dev.tar.gz
+    fetch cedar14-perfect.tar.gz
+    fetch cedar14-uuid-dev.tar.gz
+    URL=https://swift.org/builds/swift-2.2-release/ubuntu1404/swift-2.2-RELEASE
+    fetch swift-2.2-RELEASE-ubuntu14.04.tar.gz
+    say Ok
+    step Checking dependency MD5 values
+    md5sum -c << EOF || fail Bad MD5 value
+1d71863a481e3b55cf33caf08227d78e  $CACHE_DIR/cedar14-clang.tar.gz
+d50c65959548987594528e2704d67588  $CACHE_DIR/cedar14-libicu-dev.tar.gz
+1a5e9d15b8aeac4079adac56e938b4ac  $CACHE_DIR/cedar14-libsqlite3-dev.tar.gz
+62a7e145acdb9c6a850b8e76367259f6  $CACHE_DIR/cedar14-perfect.tar.gz
+24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
+58c5c574183bccd9945675768f2adba5  $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04.tar.gz
+EOF
+    say Ok
+    step Decompressing dependencies
+    decomp cedar14-clang.tar.gz
+    decomp cedar14-libicu-dev.tar.gz
+    decomp cedar14-libsqlite3-dev.tar.gz
+    decomp cedar14-perfect.tar.gz
+    decomp cedar14-uuid-dev.tar.gz
+    decomp swift-2.2-RELEASE-ubuntu14.04.tar.gz
+    say Ok
+    step Extracting dependencies
+    untar swift-2.2-RELEASE-ubuntu14.04.tar
+    mv $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04 $CACHE_DIR/.delta || fail Renaming Swift dir
+    untar cedar14-clang.tar
+    untar cedar14-libicu-dev.tar
+    untar cedar14-libsqlite3-dev.tar
+    untar cedar14-perfect.tar
+    untar cedar14-uuid-dev.tar
+    touch $CACHE_DIR/depends_done
+  fi
+say Ok
+
+step Installing dependencies into deployment environment
+rsync -Pa $CACHE_DIR/.delta/ $BUILD_DIR/.delta/ > $BUILD_DIR/build.log || fail rsync
+say Ok
+
+step Installing dependencies into build environment
+rsync -Pa $CACHE_DIR/.delta/ /app/.delta/ > $BUILD_DIR/build.log || fail rsync
+say Ok
+
+step Making application
+mkdir $BUILD_DIR/PerfectLibraries 2> $BUILD_DIR/build.log
+mkdir $BUILD_DIR/webroot 2> $BUILD_DIR/build.log
+if [ -d $BUILD_DIR/PerfectLibraries -a -d $BUILD_DIR/webroot ]; then
+    true
+  else
+    fail Creating application directories
+  fi
+cd $BUILD_DIR/src
+make > $BUILD_DIR/build.log 2>&1 || fail make
+make install > $BUILD_DIR/build.log 2>&1 || fail make install
+popd
+say Ok
