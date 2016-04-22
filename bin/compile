@@ -138,6 +138,7 @@ EOF
     untar cedar14-perfect.tar
     untar cedar14-uuid-dev.tar
     touch $CACHE_DIR/depends_done
+    touch $CACHE_DIR/depends_done2
   fi
 say Ok
 
