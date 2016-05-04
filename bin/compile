@@ -25,11 +25,15 @@ indent() {
 function paths() {
     cat << EOF
 #!/bin/bash
-export INCLUDE_PATH=$1/usr/local/include:$1/usr/local/include/x86_64-linux-gnu:$1/usr/include:$1/usr/include/x86_64-linux-gnu:\$INCLUDE_PATH
-export LD_LIBRARY_PATH=$1/usr/local/lib:$1/usr/local/lib/x86_64-linux-gnu:$1/usr/lib:$1/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH
-export LIBRARY_PATH=$1/usr/local/lib:$1/usr/local/lib/x86_64-linux-gnu:$1/usr/lib:$1/usr/lib/x86_64-linux-gnu:\$LIBRARY_PATH
-export PATH=$1/usr/local/bin:$1/usr/local/sbin:$1/usr/bin:$1/usr/sbin:\$PATH
-export PKG_CONFIG_PATH=$1/usr/lib/x86_64-linux-gnu/pkgconfig:\$PKG_CONFIG_PATH
+MY_PATH=$1
+if [ "\$MY_PATH" == "" ]; then
+    MY_PATH=\$(dirname \$(dirname \$(readlink -f \$0)))/.delta
+  fi
+export INCLUDE_PATH=\$MY_PATH/usr/local/include:\$MY_PATH/usr/local/include/x86_64-linux-gnu:\$MY_PATH/usr/include:\$MY_PATH/usr/include/x86_64-linux-gnu:\$INCLUDE_PATH
+export LD_LIBRARY_PATH=\$MY_PATH/usr/local/lib:\$MY_PATH/usr/local/lib/x86_64-linux-gnu:\$MY_PATH/usr/lib:\$MY_PATH/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH
+export LIBRARY_PATH=\$MY_PATH/usr/local/lib:\$MY_PATH/usr/local/lib/x86_64-linux-gnu:\$MY_PATH/usr/lib:\$MY_PATH/usr/lib/x86_64-linux-gnu:\$LIBRARY_PATH
+export PATH=\$MY_PATH/usr/local/bin:\$MY_PATH/usr/local/sbin:\$MY_PATH/usr/bin:\$MY_PATH/usr/sbin:\$PATH
+export PKG_CONFIG_PATH=\$MY_PATH/usr/lib/x86_64-linux-gnu/pkgconfig:\$PKG_CONFIG_PATH
 EOF
   }
 
@@ -46,23 +50,33 @@ function untar() {
     rm -f $CACHE_DIR/$1
   }
 
+function untar_rt() {
+    tar -C $CACHE_DIR/runtime -xf $CACHE_DIR/$1 || fail Extracting $1
+    rm -f $CACHE_DIR/$1
+  }
+
+pushd .
+
 step Checking stack
-if [ "$STACK" == "cedar-14" ]; then
-    true
-  else
-    fail Sorry, only Heroku cedar-14 stack is currently supported
+if [ ! -f /etc/lsb-release ]; then
+    fail Sorry, only Ubuntu 14.04 is currently supported
   fi
-say Ok
+. /etc/lsb-release
+if [ "$DISTRIB_RELEASE" != "14.04" ]; then
+    fail Sorry, only Ubuntu 14.04 is currently supported
+  fi
+say Ok.  Ubuntu 14.04 found
 
 step Setting environment
 BUILD_DIR=$1
 CACHE_DIR=$2
-pushd .
+SCRIPT_VER=3
 say Ok
 
 step Ensuring cache directory
 mkdir $CACHE_DIR 2> $BUILD_DIR/build.log
-if [ -d $CACHE_DIR ]; then
+mkdir $CACHE_DIR/runtime 2> $BUILD_DIR/build.log
+if [ -d $CACHE_DIR -a -d $CACHE_DIR/runtime ]; then
     true
   else
     fail Creating cache dir
@@ -85,13 +99,13 @@ step Setting paths
 say Ok
 
 step Checking dependencies
-if [ -f $CACHE_DIR/depends_done2 ]; then
+if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     say Dependencies cached
   else
     say Ok
     step Fetching dependencies
     URL=http://www.perfect.org/_buildpack
-    fetch cedar14-clang.tar.gz
+    fetch cedar14-clang-v2.tar.gz
     fetch cedar14-libicu-dev.tar.gz
     fetch cedar14-libmongoc.tar.gz
     fetch cedar14-libsasl2-dev.tar.gz
@@ -99,12 +113,22 @@ if [ -f $CACHE_DIR/depends_done2 ]; then
     fetch cedar14-libssl-dev.tar.gz
     fetch cedar14-perfect.tar.gz
     fetch cedar14-uuid-dev.tar.gz
+    fetch ubuntu14-clang-rt.tar.gz
+    fetch ubuntu14-libevent-rt.tar.gz
+    fetch ubuntu14-libicu-rt.tar.gz
+    fetch ubuntu14-libmongoc-rt.tar.gz
+    fetch ubuntu14-libsasl2-rt.tar.gz
+    fetch ubuntu14-libsqlite3-rt.tar.gz
+    fetch ubuntu14-libssl-rt.tar.gz
+    fetch ubuntu14-perfect-rt.tar.gz
+    fetch ubuntu14-swift-rt.tar.gz
+    fetch ubuntu14-uuid-rt.tar.gz
     URL=https://swift.org/builds/swift-2.2-release/ubuntu1404/swift-2.2-RELEASE
     fetch swift-2.2-RELEASE-ubuntu14.04.tar.gz
     say Ok
     step Checking dependency MD5 values
     md5sum -c << EOF || fail Bad MD5 value
-1d71863a481e3b55cf33caf08227d78e  $CACHE_DIR/cedar14-clang.tar.gz
+471e8f370015101a004998603922e919  $CACHE_DIR/cedar14-clang-v2.tar.gz
 d50c65959548987594528e2704d67588  $CACHE_DIR/cedar14-libicu-dev.tar.gz
 e2fa8dc41b7d6cce8473f875ab6627d0  $CACHE_DIR/cedar14-libmongoc.tar.gz
 7f1d40eb4144a83530588d5de68da119  $CACHE_DIR/cedar14-libsasl2-dev.tar.gz
@@ -113,10 +137,20 @@ e2fa8dc41b7d6cce8473f875ab6627d0  $CACHE_DIR/cedar14-libmongoc.tar.gz
 4c640c4b36c613e4ad52cf0dc5fea853  $CACHE_DIR/cedar14-perfect.tar.gz
 24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
 58c5c574183bccd9945675768f2adba5  $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04.tar.gz
+956144cc1494fe22cd0b16347896057b  $CACHE_DIR/ubuntu14-clang-rt.tar.gz
+bf91872e5ffc3dad40cf060f95aabce5  $CACHE_DIR/ubuntu14-libevent-rt.tar.gz
+aeaf99f022ba54420b36cd84abd86456  $CACHE_DIR/ubuntu14-libicu-rt.tar.gz
+7f2f1bc7dfdab06da0b41d7429acc5ab  $CACHE_DIR/ubuntu14-libmongoc-rt.tar.gz
+b619fcfd5f3df2c8111ca222957d684b  $CACHE_DIR/ubuntu14-libsasl2-rt.tar.gz
+53398947bf52c53b805ab51161ff1f24  $CACHE_DIR/ubuntu14-libsqlite3-rt.tar.gz
+3a6cb0424e11e8e0f107b8eb41061dfe  $CACHE_DIR/ubuntu14-libssl-rt.tar.gz
+184728a2242aceb901b80139daa43db7  $CACHE_DIR/ubuntu14-perfect-rt.tar.gz
+e735ca4d483c39da3661b6ee08f78204  $CACHE_DIR/ubuntu14-swift-rt.tar.gz
+3f9db16d9b85a9534739826a3f9049b2  $CACHE_DIR/ubuntu14-uuid-rt.tar.gz
 EOF
     say Ok
     step Decompressing dependencies
-    decomp cedar14-clang.tar.gz
+    decomp cedar14-clang-v2.tar.gz
     decomp cedar14-libicu-dev.tar.gz
     decomp cedar14-libmongoc.tar.gz
     decomp cedar14-libsasl2-dev.tar.gz
@@ -125,11 +159,22 @@ EOF
     decomp cedar14-perfect.tar.gz
     decomp cedar14-uuid-dev.tar.gz
     decomp swift-2.2-RELEASE-ubuntu14.04.tar.gz
+    decomp ubuntu14-clang-rt.tar.gz
+    decomp ubuntu14-libevent-rt.tar.gz
+    decomp ubuntu14-libicu-rt.tar.gz
+    decomp ubuntu14-libmongoc-rt.tar.gz
+    decomp ubuntu14-libsasl2-rt.tar.gz
+    decomp ubuntu14-libsqlite3-rt.tar.gz
+    decomp ubuntu14-libssl-rt.tar.gz
+    decomp ubuntu14-perfect-rt.tar.gz
+    decomp ubuntu14-swift-rt.tar.gz
+    decomp ubuntu14-uuid-rt.tar.gz
     say Ok
     step Extracting dependencies
     untar swift-2.2-RELEASE-ubuntu14.04.tar
-    mv $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04 $CACHE_DIR/.delta || fail Renaming Swift dir
-    untar cedar14-clang.tar
+    rsync -Pa $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04/ $CACHE_DIR/.delta/ > $BUILD_DIR/build.log || fail Renaming Swift dir
+    rm -rf $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04
+    untar cedar14-clang-v2.tar
     untar cedar14-libicu-dev.tar
     untar cedar14-libmongoc.tar
     untar cedar14-libsasl2-dev.tar
@@ -137,16 +182,21 @@ EOF
     untar cedar14-libssl-dev.tar
     untar cedar14-perfect.tar
     untar cedar14-uuid-dev.tar
-    touch $CACHE_DIR/depends_done
-    touch $CACHE_DIR/depends_done2
+    untar_rt ubuntu14-clang-rt.tar
+    untar_rt ubuntu14-libevent-rt.tar
+    untar_rt ubuntu14-libicu-rt.tar
+    untar_rt ubuntu14-libmongoc-rt.tar
+    untar_rt ubuntu14-libsasl2-rt.tar
+    untar_rt ubuntu14-libsqlite3-rt.tar
+    untar_rt ubuntu14-libssl-rt.tar
+    untar_rt ubuntu14-perfect-rt.tar
+    untar_rt ubuntu14-swift-rt.tar
+    untar_rt ubuntu14-uuid-rt.tar
+    touch $CACHE_DIR/depends_done.$SCRIPT_VER
   fi
 say Ok
 
-step Installing dependencies into deployment environment
-rsync -Pa $CACHE_DIR/.delta/ $BUILD_DIR/.delta/ > $BUILD_DIR/build.log || fail rsync
-say Ok
-
-step Installing dependencies into build environment
+step Installing build dependencies into build environment
 rsync -Pa $CACHE_DIR/.delta/ /app/.delta/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
@@ -163,3 +213,9 @@ make > $BUILD_DIR/build.log 2>&1 || fail make
 make install > $BUILD_DIR/build.log 2>&1 || fail make install
 popd
 say Ok
+
+step Installing run-time dependencies into deployment environment
+pushd .
+rsync -Pa $CACHE_DIR/runtime/.delta/ $BUILD_DIR/.delta/ > $BUILD_DIR/build.log || fail rsync
+say Ok
+

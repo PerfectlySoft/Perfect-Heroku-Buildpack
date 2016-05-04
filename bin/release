@@ -1,0 +1,9 @@
+#!/bin/bash
+# Copyright (C) 2016 Synthetel Corporation
+# Author: Shao Miller <swiftcode@synthetel.com>
+cat << EOF
+config_vars:
+  app_type: perfect
+default_process_types:
+  $(cat $1/Procfile)
+EOF
