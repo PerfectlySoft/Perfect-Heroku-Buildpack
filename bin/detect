@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f $1/src/Package.perfect -a -f $1/src/makefile ]; then
+if [ -f $1/Package.perfect -a -f $1/Sources/main.swift ]; then
     echo "Perfect"
     exit 0
   else
