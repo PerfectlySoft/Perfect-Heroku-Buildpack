@@ -71,6 +71,7 @@ step Setting environment
 BUILD_DIR=$1
 CACHE_DIR=$2
 SCRIPT_VER=3
+SWIFT_VER="swift-3.0-preview-1"
 say Ok
 
 step Ensuring cache directory
@@ -123,8 +124,8 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     fetch ubuntu14-perfect-rt.tar.gz
     fetch ubuntu14-swift-rt.tar.gz
     fetch ubuntu14-uuid-rt.tar.gz
-    URL=https://swift.org/builds/swift-2.2-release/ubuntu1404/swift-2.2-RELEASE
-    fetch swift-2.2-RELEASE-ubuntu14.04.tar.gz
+    URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
+    fetch $SWIFT_VER-ubuntu14.04.tar.gz
     say Ok
     step Checking dependency MD5 values
     md5sum -c << EOF || fail Bad MD5 value
@@ -136,7 +137,7 @@ e2fa8dc41b7d6cce8473f875ab6627d0  $CACHE_DIR/cedar14-libmongoc.tar.gz
 16c5dcd214390fd64af1a45d1860c135  $CACHE_DIR/cedar14-libssl-dev.tar.gz
 4c640c4b36c613e4ad52cf0dc5fea853  $CACHE_DIR/cedar14-perfect.tar.gz
 24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
-58c5c574183bccd9945675768f2adba5  $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04.tar.gz
+58c5c574183bccd9945675768f2adba5  $CACHE_DIR/$SWIFT_VER-ubuntu14.04.tar.gz
 956144cc1494fe22cd0b16347896057b  $CACHE_DIR/ubuntu14-clang-rt.tar.gz
 bf91872e5ffc3dad40cf060f95aabce5  $CACHE_DIR/ubuntu14-libevent-rt.tar.gz
 aeaf99f022ba54420b36cd84abd86456  $CACHE_DIR/ubuntu14-libicu-rt.tar.gz
@@ -158,7 +159,7 @@ EOF
     decomp cedar14-libssl-dev.tar.gz
     decomp cedar14-perfect.tar.gz
     decomp cedar14-uuid-dev.tar.gz
-    decomp swift-2.2-RELEASE-ubuntu14.04.tar.gz
+    decomp $SWIFT_VER-ubuntu14.04.tar.gz
     decomp ubuntu14-clang-rt.tar.gz
     decomp ubuntu14-libevent-rt.tar.gz
     decomp ubuntu14-libicu-rt.tar.gz
@@ -171,9 +172,9 @@ EOF
     decomp ubuntu14-uuid-rt.tar.gz
     say Ok
     step Extracting dependencies
-    untar swift-2.2-RELEASE-ubuntu14.04.tar
-    rsync -Pa $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04/ $CACHE_DIR/.delta/ > $BUILD_DIR/build.log || fail Renaming Swift dir
-    rm -rf $CACHE_DIR/swift-2.2-RELEASE-ubuntu14.04
+    untar $SWIFT_VER-ubuntu14.04.tar
+    rsync -Pa $CACHE_DIR/$SWIFT_VER-ubuntu14.04/ $CACHE_DIR/.delta/ > $BUILD_DIR/build.log || fail Renaming Swift dir
+    rm -rf $CACHE_DIR/$SWIFT_VER-ubuntu14.04
     untar cedar14-clang-v2.tar
     untar cedar14-libicu-dev.tar
     untar cedar14-libmongoc.tar
