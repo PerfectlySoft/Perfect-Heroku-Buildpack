@@ -72,6 +72,10 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 SCRIPT_VER=3
 SWIFT_VER="swift-3.0-preview-1"
+say "build_dir: "$BUILD_DIR
+say "cache_dir: "$CACHE_DIR
+say "script_ver: "$SCRIPT_VER
+say "swift_ver: "$SWIFT_VER
 say Ok
 
 step Ensuring cache directory
@@ -112,7 +116,7 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     fetch cedar14-libsasl2-dev.tar.gz
     fetch cedar14-libsqlite3-dev.tar.gz
     fetch cedar14-libssl-dev.tar.gz
-    fetch cedar14-perfect.tar.gz
+    #fetch cedar14-perfect.tar.gz
     fetch cedar14-uuid-dev.tar.gz
     fetch ubuntu14-clang-rt.tar.gz
     fetch ubuntu14-libevent-rt.tar.gz
@@ -121,8 +125,8 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     fetch ubuntu14-libsasl2-rt.tar.gz
     fetch ubuntu14-libsqlite3-rt.tar.gz
     fetch ubuntu14-libssl-rt.tar.gz
-    fetch ubuntu14-perfect-rt.tar.gz
-    fetch ubuntu14-swift-rt.tar.gz
+    #fetch ubuntu14-perfect-rt.tar.gz
+    #fetch ubuntu14-swift-rt.tar.gz
     fetch ubuntu14-uuid-rt.tar.gz
     URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
     fetch $SWIFT_VER-ubuntu14.04.tar.gz
@@ -157,7 +161,7 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     decomp cedar14-libsasl2-dev.tar.gz
     decomp cedar14-libsqlite3-dev.tar.gz
     decomp cedar14-libssl-dev.tar.gz
-    decomp cedar14-perfect.tar.gz
+    #decomp cedar14-perfect.tar.gz
     decomp cedar14-uuid-dev.tar.gz
     decomp $SWIFT_VER-ubuntu14.04.tar.gz
     decomp ubuntu14-clang-rt.tar.gz
@@ -167,8 +171,8 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     decomp ubuntu14-libsasl2-rt.tar.gz
     decomp ubuntu14-libsqlite3-rt.tar.gz
     decomp ubuntu14-libssl-rt.tar.gz
-    decomp ubuntu14-perfect-rt.tar.gz
-    decomp ubuntu14-swift-rt.tar.gz
+    #decomp ubuntu14-perfect-rt.tar.gz
+    #decomp ubuntu14-swift-rt.tar.gz
     decomp ubuntu14-uuid-rt.tar.gz
     say Ok
     step Extracting dependencies
@@ -181,7 +185,7 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     untar cedar14-libsasl2-dev.tar
     untar cedar14-libsqlite3-dev.tar
     untar cedar14-libssl-dev.tar
-    untar cedar14-perfect.tar
+    #untar cedar14-perfect.tar
     untar cedar14-uuid-dev.tar
     untar_rt ubuntu14-clang-rt.tar
     untar_rt ubuntu14-libevent-rt.tar
@@ -190,8 +194,8 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     untar_rt ubuntu14-libsasl2-rt.tar
     untar_rt ubuntu14-libsqlite3-rt.tar
     untar_rt ubuntu14-libssl-rt.tar
-    untar_rt ubuntu14-perfect-rt.tar
-    untar_rt ubuntu14-swift-rt.tar
+    #untar_rt ubuntu14-perfect-rt.tar
+    #untar_rt ubuntu14-swift-rt.tar
     untar_rt ubuntu14-uuid-rt.tar
     touch $CACHE_DIR/depends_done.$SCRIPT_VER
   fi
