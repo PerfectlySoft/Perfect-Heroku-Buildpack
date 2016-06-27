@@ -199,7 +199,7 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
 #    #untar_rt ubuntu14-perfect-rt.tar
 #    #untar_rt ubuntu14-swift-rt.tar
 #    untar_rt ubuntu14-uuid-rt.tar
-    touch $CACHE_DIR/depends_done.$SCRIPT_VER
+#    touch $CACHE_DIR/depends_done.$SCRIPT_VER
   fi
 say Ok
 
@@ -208,15 +208,15 @@ rsync -Pa $CACHE_DIR/.delta/ /app/.delta/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
 step Making application
-mkdir $BUILD_DIR/PerfectLibraries 2> $BUILD_DIR/build.log
-mkdir $BUILD_DIR/webroot 2> $BUILD_DIR/build.log
-if [ -d $BUILD_DIR/PerfectLibraries -a -d $BUILD_DIR/webroot ]; then
-    true
-  else
-    fail Creating application directories
-  fi
+#mkdir $BUILD_DIR/PerfectLibraries 2> $BUILD_DIR/build.log
+#mkdir $BUILD_DIR/webroot 2> $BUILD_DIR/build.log
+#if [ -d $BUILD_DIR/PerfectLibraries -a -d $BUILD_DIR/webroot ]; then
+#    true
+#  else
+#    fail Creating application directories
+#  fi
 cd $BUILD_DIR/Sources
-#swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
+swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
 #make install > $BUILD_DIR/build.log 2>&1 || fail make install
 popd
 say Ok
