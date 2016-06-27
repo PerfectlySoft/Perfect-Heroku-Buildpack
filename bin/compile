@@ -127,29 +127,29 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
     URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
     fetch $SWIFT_VER-ubuntu14.04.tar.gz
     say Ok
-    step Checking dependency MD5 values
-    md5sum -c << EOF || fail Bad MD5 value
-471e8f370015101a004998603922e919  $CACHE_DIR/cedar14-clang-v2.tar.gz
-d50c65959548987594528e2704d67588  $CACHE_DIR/cedar14-libicu-dev.tar.gz
-e2fa8dc41b7d6cce8473f875ab6627d0  $CACHE_DIR/cedar14-libmongoc.tar.gz
-7f1d40eb4144a83530588d5de68da119  $CACHE_DIR/cedar14-libsasl2-dev.tar.gz
-1a5e9d15b8aeac4079adac56e938b4ac  $CACHE_DIR/cedar14-libsqlite3-dev.tar.gz
-16c5dcd214390fd64af1a45d1860c135  $CACHE_DIR/cedar14-libssl-dev.tar.gz
-4c640c4b36c613e4ad52cf0dc5fea853  $CACHE_DIR/cedar14-perfect.tar.gz
-24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
-58c5c574183bccd9945675768f2adba5  $CACHE_DIR/$SWIFT_VER-ubuntu14.04.tar.gz
-956144cc1494fe22cd0b16347896057b  $CACHE_DIR/ubuntu14-clang-rt.tar.gz
-bf91872e5ffc3dad40cf060f95aabce5  $CACHE_DIR/ubuntu14-libevent-rt.tar.gz
-aeaf99f022ba54420b36cd84abd86456  $CACHE_DIR/ubuntu14-libicu-rt.tar.gz
-7f2f1bc7dfdab06da0b41d7429acc5ab  $CACHE_DIR/ubuntu14-libmongoc-rt.tar.gz
-b619fcfd5f3df2c8111ca222957d684b  $CACHE_DIR/ubuntu14-libsasl2-rt.tar.gz
-53398947bf52c53b805ab51161ff1f24  $CACHE_DIR/ubuntu14-libsqlite3-rt.tar.gz
-3a6cb0424e11e8e0f107b8eb41061dfe  $CACHE_DIR/ubuntu14-libssl-rt.tar.gz
-184728a2242aceb901b80139daa43db7  $CACHE_DIR/ubuntu14-perfect-rt.tar.gz
-e735ca4d483c39da3661b6ee08f78204  $CACHE_DIR/ubuntu14-swift-rt.tar.gz
-3f9db16d9b85a9534739826a3f9049b2  $CACHE_DIR/ubuntu14-uuid-rt.tar.gz
-EOF
-    say Ok
+#    step Checking dependency MD5 values
+#    md5sum -c << EOF || fail Bad MD5 value
+#471e8f370015101a004998603922e919  $CACHE_DIR/cedar14-clang-v2.tar.gz
+#d50c65959548987594528e2704d67588  $CACHE_DIR/cedar14-libicu-dev.tar.gz
+#e2fa8dc41b7d6cce8473f875ab6627d0  $CACHE_DIR/cedar14-libmongoc.tar.gz
+#7f1d40eb4144a83530588d5de68da119  $CACHE_DIR/cedar14-libsasl2-dev.tar.gz
+#1a5e9d15b8aeac4079adac56e938b4ac  $CACHE_DIR/cedar14-libsqlite3-dev.tar.gz
+#16c5dcd214390fd64af1a45d1860c135  $CACHE_DIR/cedar14-libssl-dev.tar.gz
+#4c640c4b36c613e4ad52cf0dc5fea853  $CACHE_DIR/cedar14-perfect.tar.gz
+#24e6b6007e29a04b4751d562c5534c4b  $CACHE_DIR/cedar14-uuid-dev.tar.gz
+#58c5c574183bccd9945675768f2adba5  $CACHE_DIR/$SWIFT_VER-ubuntu14.04.tar.gz
+#956144cc1494fe22cd0b16347896057b  $CACHE_DIR/ubuntu14-clang-rt.tar.gz
+#bf91872e5ffc3dad40cf060f95aabce5  $CACHE_DIR/ubuntu14-libevent-rt.tar.gz
+#aeaf99f022ba54420b36cd84abd86456  $CACHE_DIR/ubuntu14-libicu-rt.tar.gz
+#7f2f1bc7dfdab06da0b41d7429acc5ab  $CACHE_DIR/ubuntu14-libmongoc-rt.tar.gz
+#b619fcfd5f3df2c8111ca222957d684b  $CACHE_DIR/ubuntu14-libsasl2-rt.tar.gz
+#53398947bf52c53b805ab51161ff1f24  $CACHE_DIR/ubuntu14-libsqlite3-rt.tar.gz
+#3a6cb0424e11e8e0f107b8eb41061dfe  $CACHE_DIR/ubuntu14-libssl-rt.tar.gz
+#184728a2242aceb901b80139daa43db7  $CACHE_DIR/ubuntu14-perfect-rt.tar.gz
+#e735ca4d483c39da3661b6ee08f78204  $CACHE_DIR/ubuntu14-swift-rt.tar.gz
+#3f9db16d9b85a9534739826a3f9049b2  $CACHE_DIR/ubuntu14-uuid-rt.tar.gz
+#EOF
+#    say Ok
     step Decompressing dependencies
     decomp cedar14-clang-v2.tar.gz
     decomp cedar14-libicu-dev.tar.gz
