@@ -76,6 +76,8 @@ say "build_dir: "$BUILD_DIR
 say "cache_dir: "$CACHE_DIR
 say "script_ver: "$SCRIPT_VER
 say "swift_ver: "$SWIFT_VER
+say "PATH: "$PATH
+say "Include_Path: "$INCLUDE_PATH
 say Ok
 
 step Ensuring cache directory
