@@ -122,7 +122,7 @@ apt-get $APT_OPTIONS -y --force-yes -d install --reinstall uuid-dev | indent
 mkdir -p $BUILD_DIR/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
-  topic "Installing $(basename $DEB)"
+  say "Installing $(basename $DEB)"
   dpkg -x $DEB $BUILD_DIR/.apt/
 done
 
