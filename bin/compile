@@ -104,6 +104,8 @@ say Ok
 step Setting paths
 . $BUILD_DIR/.profile.d/perfect.sh || fail Executing perfect.sh
 say Ok
+say "PATH: "$PATH
+say "Include_Path: "$INCLUDE_PATH
 
 step Checking dependencies
 if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
