@@ -23,7 +23,6 @@ indent() {
 }
 
 function paths() {
-    say "paths() MYPATH is: "$1
     cat << EOF
 #!/bin/bash
 MY_PATH=$1
