@@ -127,7 +127,7 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
 done
 
 step modify pkgconfig files to point to .apt directory
-grep -rl prefix=/usr $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/pkgconfig/ | xargs sed -i 's/prefix=\/usr/prefix=\/app\/.apt\/usr/g'
+grep -rl prefix=/usr $BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/pkgconfig/ | xargs sed -i 's|prefix=/usr|prefix=/app/.apt/usr|g'
 
 step Checking dependencies
 if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
