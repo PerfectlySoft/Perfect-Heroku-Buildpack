@@ -207,6 +207,7 @@ say Ok
 
 step Installing build dependencies into build environment
 rsync -Pa $CACHE_DIR/.delta/ /app/.delta/ > $BUILD_DIR/build.log || fail rsync
+rsync -Pa $CACHE_DIR/.apt/ /app/.apt/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
 step Making application
@@ -217,7 +218,11 @@ step Making application
 #  else
 #    fail Creating application directories
 #  fi
-cd $BUILD_DIR/Sources
+### Should not need to be in the Sources directory in order to build
+# cd $BUILD_DIR/Sources
+say "current PkgConfigPath: "$PKG_CONFIG_PATH
+
+cd $BUILD_DIR/
 swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
 #make install > $BUILD_DIR/build.log 2>&1 || fail make install
 popd
