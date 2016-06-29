@@ -100,6 +100,7 @@ if [ -d $BUILD_DIR/.profile.d ]; then
 paths /app/.test > $BUILD_DIR/.profile.d/perfect.sh || fail Saving perfect.sh
 chmod a+x $BUILD_DIR/.profile.d/perfect.sh || fail chmod perfect.sh
 say Ok
+say "perfect.sh: "$(cat $BUILD_DIR/.profile.d/perfect.sh)
 
 step Setting paths
 . $BUILD_DIR/.profile.d/perfect.sh || fail Executing perfect.sh
@@ -141,6 +142,7 @@ step install swift_ver $SWIFT_VER
     untar $SWIFT_VER-ubuntu14.04.tar
     rsync -Pa $CACHE_DIR/$SWIFT_VER-ubuntu14.04/ $CACHE_DIR/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
     rm -rf $CACHE_DIR/$SWIFT_VER-ubuntu14.04
+    say $(ls -1 $CACHE_DIR/.test/)
 say Ok
 
 step Installing apt build dependencies into build environment
