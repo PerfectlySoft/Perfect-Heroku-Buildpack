@@ -131,7 +131,7 @@ say "curr Build_dir: "$BUILD_DIR
 GREP_PATH="$BUILD_DIR/.test/usr/lib/x86_64-linux-gnu/pkgconfig/"
 say "grep path: "$GREP_PATH
 say "apt install files: "$(ls -1 $BUILD_DIR/.test/)
-say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
+#say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
 #step modify pkgconfig files to point to .test directory
 #grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
 
@@ -150,15 +150,15 @@ rsync -Pa $CACHE_DIR/.test/ $BUILD_DIR/.test/ > $BUILD_DIR/build.log || fail Ren
 say Ok
 
 #step Install Swift into live dir
-#rsync -Pa $CACHE_DIR/.test/ $BUILD_DIR/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
+#rsync -Pa $CACHE_DIR/.test/ /app/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
 #say Ok
 
 step Installing apt build dependencies into build environment
 rsync -Pa $BUILD_DIR/.test/ /app/.test/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
-say check uuid.pc file
-say $(cat "/app/.test/usr/lib/x86_64-linux-gnu/pkgconfig/uuid.pc")
+#say check uuid.pc file
+#say $(cat "/app/.test/usr/lib/x86_64-linux-gnu/pkgconfig/uuid.pc")
 
 step Making application
 
@@ -166,6 +166,7 @@ step Making application
 # cd $BUILD_DIR/Sources
 say "current PkgConfigPath: "$PKG_CONFIG_PATH
 say "current PATH: "$PATH
+say "swift ver: "$(swift --version)
 
 cd $BUILD_DIR/
 swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
