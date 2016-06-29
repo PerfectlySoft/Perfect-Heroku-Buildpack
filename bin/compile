@@ -129,6 +129,7 @@ done
 say "curr Build_dir: "$BUILD_DIR
 GREP_PATH="$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/pkgconfig/"
 say "grep path: "$GREP_PATH
+say "apt install files: "(ls -1 $BUILD_DIR)
 
 step modify pkgconfig files to point to .apt directory
 grep -rl prefix=/usr $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.apt/usr|g'
