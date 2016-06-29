@@ -177,6 +177,7 @@ step Making application
 say "current PkgConfigPath: "$PKG_CONFIG_PATH
 say "current PATH: "$PATH
 say "swift ver: "$(swift --version)
+say "ls pkgconfig target dir:"$(ls -1 /app/.test/usr)
 
 cd $BUILD_DIR/
 swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
