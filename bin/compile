@@ -136,9 +136,9 @@ say "curr Build_dir: "$BUILD_DIR
 GREP_PATH="$BUILD_DIR/.test/usr/lib/x86_64-linux-gnu/pkgconfig/"
 say "grep path: "$GREP_PATH
 say "apt install files: "$(ls -1 $BUILD_DIR/.test/)
-#say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
+say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
 #step modify pkgconfig files to point to .test directory
-#grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
+grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
 
 step install swift_ver $SWIFT_VER
     URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
@@ -153,6 +153,9 @@ say Ok
 step Install Swift into BuildDir
 rsync -Pa $CACHE_DIR/.test/ $BUILD_DIR/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
 say Ok
+
+say "Post Swift install files: "$(ls -1 $BUILD_DIR/.test/)
+say "Post Swift pkgconfig files: "$(ls -1 $GREP_PATH)
 
 #step Install Swift into live dir
 #rsync -Pa $CACHE_DIR/.test/ /app/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
