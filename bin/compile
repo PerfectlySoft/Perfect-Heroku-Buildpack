@@ -232,6 +232,10 @@ if [ -f $CACHE_DIR/depends_done.$SCRIPT_VER ]; then
   fi
 say Ok
 
+step Installing apt build dependencies into build environment
+rsync -Pa $BUILD_DIR/.apt/ /app/.apt/ > $BUILD_DIR/build.log || fail rsync
+say Ok
+
 step Installing build dependencies into build environment
 rsync -Pa $CACHE_DIR/.delta/ /app/.delta/ > $BUILD_DIR/build.log || fail rsync
 say Ok
