@@ -141,7 +141,8 @@ say "apt install files: "$(ls -1 $BUILD_DIR/.test/)
 say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
 say "uuid.pc contents"$(cat $GREP_PATH"uuid.pc")
 #step modify pkgconfig files to point to .test directory
-grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=$BUILD_DIR/.test/usr|g'
+SED_STRING = s|prefix=/usr|prefix=$BUILD_DIR/.test/usr|g
+grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i $SED_STRING
 
 step install swift_ver $SWIFT_VER
     URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
