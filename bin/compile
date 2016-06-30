@@ -98,7 +98,6 @@ if [ -d $BUILD_DIR/.profile.d ]; then
     fail Creating .profile.d dir
   fi
 paths /app/.test > $BUILD_DIR/.profile.d/perfect.sh || fail Saving perfect.sh
-paths $BUILD_DIR/.test >> $BUILD_DIR/.profile.d/perfect.sh || fail Saving perfect.sh
 
 chmod a+x $BUILD_DIR/.profile.d/perfect.sh || fail chmod perfect.sh
 say Ok
