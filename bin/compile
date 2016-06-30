@@ -15,6 +15,7 @@ function fail() {
   }
 
 function fetch() {
+    if
     wget -P $CACHE_DIR $URL/$1 2> /dev/null || fail Fetching $1
   }
 
@@ -145,7 +146,9 @@ say "uuid.pc contents"$(cat $GREP_PATH"uuid.pc")
 grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
 
 step install swift_ver $SWIFT_VER
-    URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
+#https://swift.org/builds/development/ubuntu1404/swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a/swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a-ubuntu14.04.tar.gz
+    #release build URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
+    URL=https://swift.org/builds/development/ubuntu1404/$SWIFT_VER
     fetch $SWIFT_VER-ubuntu14.04.tar.gz
     decomp $SWIFT_VER-ubuntu14.04.tar.gz
     untar $SWIFT_VER-ubuntu14.04.tar
