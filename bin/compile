@@ -185,13 +185,14 @@ say "ls pkgconfig include dir:"$(ls -1 /app/.test/usr/include/)
 say "ls pkgconfig lib dir:"$(ls -1 /app/.test/usr/lib/x86_64-linux-gnu/)
 
 cd $BUILD_DIR/
-swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
+say "no build for now"
+#swift build > $BUILD_DIR/build.log 2>&1 || fail swift build
 #make install > $BUILD_DIR/build.log 2>&1 || fail make install
 popd
 say Ok
 
-step Installing run-time dependencies into deployment environment
-pushd .
-rsync -Pa $CACHE_DIR/runtime/.delta/ $BUILD_DIR/.delta/ > $BUILD_DIR/build.log || fail rsync
+#step Installing run-time dependencies into deployment environment
+#pushd .
+#rsync -Pa $CACHE_DIR/runtime/.delta/ $BUILD_DIR/.delta/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
