@@ -71,7 +71,8 @@ step Setting environment
 BUILD_DIR=$1
 CACHE_DIR=$2
 SCRIPT_VER=3
-SWIFT_VER="swift-3.0-preview-1"
+#SWIFT_VER="swift-3.0-preview-1"
+SWIFT_VER="DEVELOPMENT-SNAPSHOT-2016-06-20-a"
 say "build_dir: "$BUILD_DIR
 say "cache_dir: "$CACHE_DIR
 say "script_ver: "$SCRIPT_VER
