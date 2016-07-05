@@ -73,12 +73,6 @@ CACHE_DIR=$2
 SCRIPT_VER=3
 #SWIFT_VER="swift-3.0-preview-1"
 SWIFT_VER="swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a"
-say "build_dir: "$BUILD_DIR
-say "cache_dir: "$CACHE_DIR
-say "script_ver: "$SCRIPT_VER
-say "swift_ver: "$SWIFT_VER
-say "PATH: "$PATH
-say "Include_Path: "$INCLUDE_PATH
 say Ok
 
 step Ensuring cache directory
@@ -107,8 +101,6 @@ say "perfect.sh: "$(cat $BUILD_DIR/.profile.d/perfect.sh)
 step Setting paths
 . $BUILD_DIR/.profile.d/perfect.sh || fail Executing perfect.sh
 say Ok
-say "PATH: "$PATH
-say "Include_Path: "$INCLUDE_PATH
 
 step Test direct apt install
 
@@ -127,25 +119,18 @@ apt-get $APT_OPTIONS -y --force-yes -d install --reinstall libssl-dev | indent
 apt-get $APT_OPTIONS -y --force-yes -d install --reinstall uuid-dev | indent
 
 mkdir -p $BUILD_DIR/.test
-#say "deb list: "$(ls -1 $APT_CACHE_DIR/archives/*.deb)
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   say "Installing $(basename $DEB)"
   dpkg -x $DEB $BUILD_DIR/.test/
 done
 
-say "curr Build_dir: "$BUILD_DIR
 GREP_PATH="$BUILD_DIR/.test/usr/lib/x86_64-linux-gnu/pkgconfig/"
-say "grep path: "$GREP_PATH
-say "apt install files: "$(ls -1 $BUILD_DIR/.test/)
-say "apt pkgconfig files: "$(ls -1 $GREP_PATH)
-say "uuid.pc contents"$(cat $GREP_PATH"uuid.pc")
-#step modify pkgconfig files to point to .test directory
 
+step modify pkgconfig files to point to .test directory
 grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
 
 step install swift_ver $SWIFT_VER
-#https://swift.org/builds/development/ubuntu1404/swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a/swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a-ubuntu14.04.tar.gz
     #release build URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
     URL=https://swift.org/builds/development/ubuntu1404/$SWIFT_VER
     fetch $SWIFT_VER-ubuntu14.04.tar.gz
@@ -153,7 +138,6 @@ step install swift_ver $SWIFT_VER
     untar $SWIFT_VER-ubuntu14.04.tar
     rsync -Pa $CACHE_DIR/$SWIFT_VER-ubuntu14.04/ $CACHE_DIR/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
     rm -rf $CACHE_DIR/$SWIFT_VER-ubuntu14.04
-    say $(ls -1 $CACHE_DIR/.test/)
 say Ok
 
 step Install Swift into BuildDir
@@ -161,36 +145,14 @@ mkdir /app/.test/
 rsync -Pa $CACHE_DIR/.test/ $BUILD_DIR/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
 say Ok
 
-say "Post Swift install files: "$(ls -1 $BUILD_DIR/.test/)
-say "Post Swift pkgconfig files: "$(ls -1 $GREP_PATH)
-say "uuid.pc contents"$(cat $GREP_PATH"uuid.pc")
-#step Install Swift into live dir
-#rsync -Pa $CACHE_DIR/.test/ /app/.test/ > $BUILD_DIR/build.log || fail Renaming Swift dir
-#say Ok
-
 step Installing apt build dependencies into build environment
 rsync -Pa $BUILD_DIR/.test/ /app/.test/ > $BUILD_DIR/build.log || fail rsync
 say Ok
 
-#say check uuid.pc file
-#say $(cat "/app/.test/usr/lib/x86_64-linux-gnu/pkgconfig/uuid.pc")
-
 step Making application
-
-### Should not need to be in the Sources directory in order to build
-# cd $BUILD_DIR/Sources
-say "current PkgConfigPath: "$PKG_CONFIG_PATH
-say "current PATH: "$PATH
-say "swift ver: "$(swift --version)
-say "ls pkgconfig target dir:"$(ls -1 /app/.test/usr)
-say "ls pkgconfig include dir:"$(ls -1 /app/.test/usr/include/)
-say "ls pkgconfig lib dir:"$(ls -1 /app/.test/usr/lib/x86_64-linux-gnu/)
-
 cd $BUILD_DIR/
 say "build with custom library paths"
 swift build -Xlinker -L/app/.test/usr/lib -Xcc -I/app/.test/usr/include/ > $BUILD_DIR/build.log 2>&1 || fail swift build
-#make install > $BUILD_DIR/build.log 2>&1 || fail make install
-popd
 say Ok
 
 #step Installing run-time dependencies into deployment environment
