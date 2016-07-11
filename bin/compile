@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (C) 2016 Synthetel Corporation
 # Author: Shao Miller <swiftcode@synthetel.com>
-
+# Updated: Tim Taplin taplin@accesstelluride.com June 2016
 function decomp() {
     gunzip -f $CACHE_DIR/$1 || fail Decompressing $1
   }
@@ -71,8 +71,9 @@ step Setting environment
 BUILD_DIR=$1
 CACHE_DIR=$2
 SCRIPT_VER=3
-#SWIFT_VER="swift-3.0-preview-1"
-SWIFT_VER="swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a"
+SWIFT_VER="swift-3.0-PREVIEW-2"
+SWIFT_VER_LC="swift-3.0-preview-2"
+#SWIFT_VER="swift-DEVELOPMENT-SNAPSHOT-2016-06-20-a"
 say Ok
 
 step Ensuring cache directory
@@ -131,8 +132,9 @@ step modify pkgconfig files to point to .test directory
 grep -rl "prefix=/usr" $GREP_PATH | xargs sed -i 's|prefix=/usr|prefix=/app/.test/usr|g'
 
 step install swift_ver $SWIFT_VER
-    #release build URL=https://swift.org/builds/$SWIFT_VER/ubuntu1404/$SWIFT_VER
-    URL=https://swift.org/builds/development/ubuntu1404/$SWIFT_VER
+    #release build 
+    URL=https://swift.org/builds/$SWIFT_VER_LC/ubuntu1404/$SWIFT_VER
+    #development build URL=https://swift.org/builds/development/ubuntu1404/$SWIFT_VER
     fetch $SWIFT_VER-ubuntu14.04.tar.gz
     decomp $SWIFT_VER-ubuntu14.04.tar.gz
     untar $SWIFT_VER-ubuntu14.04.tar
