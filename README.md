@@ -2,7 +2,7 @@
 
 [![Gitter](https://badges.gitter.im/PerfectlySoft/PerfectDocs.svg)](https://gitter.im/PerfectlySoft/PerfectDocs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Reference and documentation for the Perfect library.
+A Heroku Buildpack for Swift + Perfect.
 
 ## Issues
 
@@ -12,10 +12,6 @@ If you find a mistake, bug, or any other helpful suggestion you'd like to make o
 
 A comprehensive list of open issues can be found at [http://jira.perfect.org:8080/projects/ISS/issues](http://jira.perfect.org:8080/projects/ISS/issues)
 
-
-A Heroku Buildpack for Swift + Perfect
-Packaged by Shao Miller <swiftcode@synthetel.com>
-2016-03-22 13:25:42 UTC
 
 This "Buildpack" makes dependencies available at the /app/.delta/ path.  These
 include Swift and Perfect.
